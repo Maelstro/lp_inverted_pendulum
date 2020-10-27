@@ -1,0 +1,12 @@
+mex P1_BaseAddress.c
+mex P1_BitstreamVersion.c
+mex P1_Encoder.c
+mex P1_LimitFlag.c
+mex P1_PWM.c
+mex P1_PWMPrescaler.c
+mex P1_PWMTherm.c
+mex P1_ResetEncoder.c
+mex P1_ResetSwitchFlag.c
+mex P1_SetLimit.c
+mex P1_Switch.c
+mex P1_ThermFlag.c
