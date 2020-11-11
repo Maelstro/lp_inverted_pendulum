@@ -7,7 +7,7 @@ M = 0.768;
 m = 0.033 * 2;
 L = 0.25;
 g = 9.81;
-x_pocz = pi-0.2;
+x_pocz = pi - 0.2;
 x_konc = pi;
 Q2 = (J*(M+m) + M*m*L*L);
 
@@ -22,11 +22,24 @@ B = [0;
     0
     0.5*m*L/(J*(M+m) + m*M*L*L)];
 
-Q = [1 0 0 0; 
+C = [1 0 0 0;
     0 0 0 0;
-    0 0 1 0; 
-    0 0 0 0]; % Macierz obserwatora
-R = 0.33; % Macierz regulacji
+    0 0 1 0;
+    0 0 0 0];
+
+% Q = [0.01 0 0 0; 
+%     0 1 0 0;
+%     0 0 1 0; 
+%     0 0 0 1]; % Macierz obserwatora
+% 
+% R = 1; % Macierz regulacji
+
+Q = [100 0 0 0; 
+    0 100 0 0;
+    0 0 3600 0; 
+    0 0 0 1000]; % Macierz obserwatora
+
+R = 1; % Macierz regulacji
 
 % Obliczenie macierzy LQR
 K_reg = lqr(A,B,Q,R);
