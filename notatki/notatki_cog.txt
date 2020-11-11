@@ -1,0 +1,25 @@
+Odległość od środka ciężkości do odważnika (środek): 15,5 cm
+Odległość od środka ciężkości do drugiego końca pręta: 33,6 cm
+Odległość od środka ciężkości do punktu obrotu: 25 cm
+Odważnik ma długość 1,8 cm
+
+Zestaw x2:
+Pręt+obciążnik 31g
+Obciążnik - 11g
+Pręt - 20g
+
+--- NACIĄG ---
+Naciąg - 9 N
+
+Sterowanie 	Naciąg
+0.1 		1.0 N
+0.15		2.2 N
+0.2		3.0 N
+0.25		3.5 N
+0.3		4.0 N
+0.35		4.6 N
+0.4		5.3 N
+0.45		5.7 N
+0.5		6.0 N
+0.55		6.1 N
+0.6		6.0 N
