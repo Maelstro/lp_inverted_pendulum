@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Cezary Maciński, Kinga Talaga, Maciej Wójcik Automatyka i Robotyka, Inteligentne Systemy Sterowania Grupa 1a" />
+  <title>Wahadło odwrócone Laboratorium Problemowe</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Wahadło odwrócone<br />
+<span>Laboratorium Problemowe</span></h1>
+<p class="author">Cezary Maciński, Kinga Talaga, Maciej Wójcik<br />
+Automatyka i Robotyka, Inteligentne Systemy Sterowania<br />
+Grupa 1a</p>
+<p class="date">Kraków, 2020</p>
+</header>
+<h1 id="problematyka">Problematyka</h1>
+<p>Na tegorocznej edycji przedmiotu Laboratorium Problemowe 2, zespół wybrał temat odwróconego wahadła na wózku. Początkowy plan zakładał:</p>
+<ul>
+<li><p>wykonanie podstawowych pomiarów poszczególnych części modelu,</p></li>
+<li><p>wyznaczenie współczynników tarć występujących w modelu obiektu,</p></li>
+<li><p>opracowanie modelu matematycznego,</p></li>
+<li><p>wykonanie modelu symulacyjnyego,</p></li>
+<li><p>zaprojektowanie regulatora LQR,</p></li>
+<li><p>dodanie modułu swing-up,</p></li>
+<li><p>weryfikacja modelu symulacyjnego z rzeczywistym obiektem,</p></li>
+</ul>
+<p>jednak z czasem przeprowadzania kolejnych eksperymentów, pewne etapy zostały zmodyfikowane, niektóre zostały wyłączone z projektu, a na niektórych zespół skupił większą uwagę niż na pozostałych.</p>
+<p>Poniżej przedstawiono schemat układu wraz z rozkładem sił (<a href="#fig:schemat" data-reference-type="ref" data-reference="fig:schemat">1</a>):</p>
+<figure>
+<img src="schemat.png" id="fig:schemat" style="width:55.0%" alt="" /><figcaption>Schemat układu (źródło: instrukcja dołączona do obiektu)</figcaption>
+</figure>
+<h1 id="pomiary-modelu">Pomiary modelu</h1>
+<h2 id="pomiary-wahadła">Pomiary wahadła</h2>
+<p>Przeprowadzono działania mające na celu uzyskanie wartości wagi oraz długości pręta wahadła i obciążnika zamontowanego na jego końcu. Uznano, że druga para wahadła ma takie same wartości parametrów. Odkręcono pręt od wózka, zdjęto obciążk i wykonano pomiary, które wykazały następujące wartości:</p>
+<ul>
+<li><p>długość pręta - 50 cm</p></li>
+<li><p>długość odważnika - 1.8 cm</p></li>
+<li><p>odległość od końca pręta do środka ciężkości (wyznaczonego eksperymentalnie) - 33.6 cm</p></li>
+<li><p>odległość od połowy odważnika do środka ciężkości - 15.5 cm</p></li>
+<li><p>odległość od punktu obrotu do środka ciężkości - 25 cm</p></li>
+</ul>
+<p>Eksperyment, za pomocą którego wyznaczono środek ciężkości polegał na zrównoważeniu poziomo położonego pręta na cienkim obiekcie. Przesuwając pręt w obie strony, udało się uzyskać punkt równowagi, co świadczyło że w tym punkcie znajduje się środek ciężkości pręta.</p>
+<p>Za punkt obrotu przyjęty został punkt, w którym było przyłożone mocowanie do wózka. Uznano, że domyślnie wybrany punkt będzie odpowiedni.</p>
+<p>Sprawdzanie wszystkich odległości miało zapewnić o poprawności wykonanych pomiarów (co jak można zauważyć zostało spełnione (suma odległości od jednego końca do środa odważnika oraz połowa odważnika jest równa sumarycznej długości pręta)</p>
+<p>Wykonano również pomiar masy, wyniki są następujące:</p>
+<ul>
+<li><p>masa pręta - 20 g,</p></li>
+<li><p>masa obciążnika - 11 g,</p></li>
+<li><p>masa pręta i obciążnika - 31 g.</p></li>
+</ul>
+<p>Tutaj również wykonano sprawdzenie poprawności pomiarów i również dało ono pozytywny wynik.</p>
+<h2 id="subsec:sila_silnik">Pomiar siły wytwarzanej przez silnik</h2>
+<p>W celu wyznaczenia siły wytwarzanej przez silnik, zespół zbadał wartość siły dla zadanych wartości wypełnienia PWM. Przedstawione w tabeli wartości zawierają wypełnienie sygnału PWM, napięcie przyłożone do silnika, siłę z jaką działa silnik na wózek.</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Wypełnienie</th>
+<th style="text-align: center;">Napięcie [V]</th>
+<th style="text-align: center;">Siła [F]</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">0.1</td>
+<td style="text-align: center;">2.4</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">0.15</td>
+<td style="text-align: center;">3.6</td>
+<td style="text-align: center;">2.2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">0.2</td>
+<td style="text-align: center;">4.8</td>
+<td style="text-align: center;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">0.25</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">3.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">0.3</td>
+<td style="text-align: center;">7.2</td>
+<td style="text-align: center;">4</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">0.35</td>
+<td style="text-align: center;">8.4</td>
+<td style="text-align: center;">4.6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">0.4</td>
+<td style="text-align: center;">9.6</td>
+<td style="text-align: center;">5.3</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">0.45</td>
+<td style="text-align: center;">10.8</td>
+<td style="text-align: center;">5.7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">0.5</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">6</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">0.55</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">0.6</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">6</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">0.65</td>
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">6</td>
+</tr>
+</tbody>
+</table>
+<p>Można zauważyć w powyższej tabeli pewną nieprawidłowość. Mianowicie dla wypełnienia większego bądź równego 0.5, wartość napięcia ani siły się nie zmienia. Jest to spowodowane ograniczeniem obiektu (zabezpieczeniem), który nie przyjmie większego napięcia niż 12 V, tym samym nie uzyska siły większej niż dla 12 V (tj. 6 N).</p>
+<h1 id="wyznaczenie-współczynników-tarcia">Wyznaczenie współczynników tarcia</h1>
+<p>Podczas laboratorium wykonano eksperymenty pozwalające wyznaczyć zarówno tarcie wiskotyczne (dynamiczne), jak i tarcie statyczne.</p>
+<h2 id="eksperyment-wahadła">Eksperyment wahadła</h2>
+<p>Dla wahadła wykonano cztery wariacje eksperymentu polegającego na ruchu swobodnym wahadła (<a href="#fig:wahadlo45" data-reference-type="ref" data-reference="fig:wahadlo45">2</a>-<a href="#fig:wahadlo180" data-reference-type="ref" data-reference="fig:wahadlo180">5</a>). Każda z wariacji różniła się zadanym początkowym wyhyleniem. Jednak z racji niskich wartości tarć, zdecydowano się je pominąć, tym samym upraszczając model. Zespół wraz z prowadzącym podjął decyzję, że wpływ tarcia nie będzie znaczący dla systemu sterowania.</p>
+<figure>
+<img src="wahadlo45.jpg" id="fig:wahadlo45" style="width:95.0%" alt="" /><figcaption>Wykres wychylenia wahadła w czasie dla kąta początkowego - 45°C</figcaption>
+</figure>
+<p>Obliczony okres drgań wynosi 1.223 s.</p>
+<figure>
+<img src="wahadlo90.jpg" id="fig:wahadlo90" style="width:95.0%" alt="" /><figcaption>Wykres wychylenia wahadła w czasie dla kąta początkowego - 90°C</figcaption>
+</figure>
+<p>Obliczony okres drgań wynosi 1.246 s.</p>
+<figure>
+<img src="wahadlo135.jpg" id="fig:wahadlo135" style="width:95.0%" alt="" /><figcaption>Wykres wychylenia wahadła w czasie dla kąta początkowego - 135°C</figcaption>
+</figure>
+<p>Obliczony okres drgań wynosi 1.263 s.</p>
+<figure>
+<img src="wahadlo180.jpg" id="fig:wahadlo180" style="width:95.0%" alt="" /><figcaption>Wykres wychylenia wahadła w czasie dla kąta początkowego - 180°C</figcaption>
+</figure>
+<p>Obliczony okres drgań wynosi 1.267 s.</p>
+<p>Uśredniając uzyskane okresy drgań własnych uzyskano wartość równą 1.25 s.</p>
+<h2 id="eksperyment-wózka">Eksperyment wózka</h2>
+<p>Dla wózka przeprowadzono podobny eksperyment (z ruchem swobodnym). Zapisano dane dla współczynników wypełnienia -0.15, 0.15 oraz 0.25, jednak z racji później zauważonych sporych szumów w sygnale prędkości wózka, zdecydowano się wykorzystać wyłącznie pomiary z przyjętego współczynnika 0.25. Przedstawione zostały na rys. <a href="#fig:wozek" data-reference-type="ref" data-reference="fig:wozek">6</a>, <a href="#fig:wozek_zoom" data-reference-type="ref" data-reference="fig:wozek_zoom">7</a>.</p>
+<figure>
+<img src="wozek.jpg" id="fig:wozek" style="width:95.0%" alt="" /><figcaption>Wykres prędkości wózka dla współczynnika wypełnienia PWM = 0.25</figcaption>
+</figure>
+<p>By lepiej zobrazować kształt oraz przebieg wykresu, został on przedstawiony w powiększeniu na rys. <a href="#fig:wozek_zoom" data-reference-type="ref" data-reference="fig:wozek_zoom">7</a></p>
+<figure>
+<img src="wozek_zoom.jpg" id="fig:wozek_zoom" style="width:95.0%" alt="" /><figcaption>Wykres prędkości wózka w powiększeniu dla współczynnika wypełnienia PWM = 0.25</figcaption>
+</figure>
+<p>Zarówno jak przy współczynnikach tarcia dla wahadła, również tutaj zdecydowano się uznać tarcia za pomijalnie małe.</p>
+<h2 id="podsumowanie-identyfikacji">Podsumowanie identyfikacji</h2>
+<p>Po przeprowadzeniu identyfikacji parametrów obiektu możliwe było wyznaczenie momentu bezwładności prętów wahadła oraz współczynników tarcia układu - zarówno wózka, jak i wahadła. W podstawowym modelu matematycznym postanowiono nie uwzględniać tarcia - regulator LQR opracowany na podstawie uproszczonego modelu również powinien być w stanie wysterować układ rzeczywisty.</p>
+<h1 id="model-matematyczny">Model matematyczny</h1>
+<p>Model układu został przedstawiony na rysunku <a href="#fig:schemat" data-reference-type="ref" data-reference="fig:schemat">1</a>. Na tym etapie prac, tarcie wahadła oraz wózka zostało pominięte.</p>
+<p>Wartości wykorzystywane w trakcie obliczeń:</p>
+<p><span class="math inline"><em>M</em></span> &amp; masa wózka [kg],<br />
+<span class="math inline"><em>m</em></span> &amp; masa wahadła [kg],<br />
+<span class="math inline"><em>L</em></span> &amp; odległość środka masy wahadła od punktu obrotu [m],<br />
+<span class="math inline"><em>g</em></span> &amp; przyspieszenie grawitacyjne [<span class="math inline">$\frac{kg*m}{s^{2}}$</span>].</p>
+<h2 id="dynamika-wahadła---uwolnienie-od-więzów">Dynamika wahadła - uwolnienie od więzów</h2>
+<p>W celu wyznaczenia wartości przyspieszeń liniowych i kątowych wahadła, uwolniono od więzów pręt oraz wózek, wskutek czego uzyskano siły reakcji N oraz P. Wynik przedstawiono na rysunkach <a href="#fig:wiezy_wozek" data-reference-type="ref" data-reference="fig:wiezy_wozek">8</a> i <a href="#fig:wiezy_wahadlo" data-reference-type="ref" data-reference="fig:wiezy_wahadlo">9</a>.</p>
+<figure>
+<img src="wiezy_wozek.png" id="fig:wiezy_wozek" style="width:60.0%" alt="" /><figcaption>Siły działające na wózek po uwolnieniu od więzów</figcaption>
+</figure>
+<p>Siły P i N działają odpowiednio wzdłuż osi OY i OX, są one reakcjami, opisanymi na początku tego podrozdziału.</p>
+<figure>
+<img src="wiezy_wahadlo.png" id="fig:wiezy_wahadlo" style="width:60.0%" alt="" /><figcaption>Siły działające na wahadło po uwolnieniu od więzów</figcaption>
+</figure>
+<p>Po uwolnieniu od więzów przystąpiono do wyznaczenia równań dynamiki dla wózka (<a href="#eq:dynamika_wozka_x" data-reference-type="ref" data-reference="eq:dynamika_wozka_x">[eq:dynamika_wozka_x]</a>) oraz wahadła (<a href="#eq:dynamika_wahadla_moment" data-reference-type="ref" data-reference="eq:dynamika_wahadla_moment">[eq:dynamika_wahadla_moment]</a>):</p>
+<p><br /><span class="math display">$$\begin{aligned}
+    M\Ddot{x} &amp;= \sum{F_{ix}} = F - N \label{eq:dynamika_wozka_x}\\
+    J\Ddot{\theta} &amp;= \sum{M_{s}} = -PL\sin{\theta} - NL\cos{\theta} \label{eq:dynamika_wahadla_moment}\end{aligned}$$</span><br /></p>
+<p>W przypadku wózka wyliczane jest tylko przyspieszenie wzdłuż osi OX, zaś w przypadku wahadła - przyspieszenie kątowe, gdyż cały układ ma 2 stopnie swobody - właśnie położenie <span class="math inline"><em>x</em></span> i położenie kątowe <span class="math inline"><em>θ</em></span>.</p>
+<h2 id="analiza-sił-reakcji">Analiza sił reakcji</h2>
+<p>Aby dokładnie określić ruch wahadła, należy rozważyć układ sił działających na wahadło (<a href="#eq:dynamika_wahadla_x" data-reference-type="ref" data-reference="eq:dynamika_wahadla_x">[eq:dynamika_wahadla_x]</a>, <a href="#eq:dynamika_wahadla_y" data-reference-type="ref" data-reference="eq:dynamika_wahadla_y">[eq:dynamika_wahadla_y]</a>):</p>
+<p><br /><span class="math display">$$\begin{aligned}
+    m\Ddot{x_{p}} &amp;= N \label{eq:dynamika_wahadla_x}\\
+    m\Ddot{y_{p}} &amp;= P - mg \label{eq:dynamika_wahadla_y}\end{aligned}$$</span><br /></p>
+<p>Przyspieszenia liniowe wahadła <span class="math inline">$\Ddot{x_{p}}$</span> i <span class="math inline">$\Ddot{y_{p}}$</span> wyznaczono na podstawie kinematyki układu (<a href="#eq:kinematyka_start" data-reference-type="ref" data-reference="eq:kinematyka_start">[eq:kinematyka_start]</a> - <a href="#eq:kinematyka_stop" data-reference-type="ref" data-reference="eq:kinematyka_stop">[eq:kinematyka_stop]</a>):</p>
+<p><br /><span class="math display">$$\begin{aligned}
+    x_{p} &amp;= x + L\sin{\theta} \label{eq:kinematyka_start}\\
+    \dot{x_{p}} &amp;= \dot{x} + L\dot{\theta}\cos{\theta} \\
+    \Ddot{x_{p}} &amp;= \Ddot{x} - L\dot{\theta}^{2}\sin{\theta} + L\Ddot{\theta}\cos{\theta}\label{eq:x_wah_przyspieszenie} \\
+    y_{p} &amp;= -L\cos{\theta} \\
+    \dot{y_{p}} &amp;= L\dot{\theta}\sin{\theta} \\
+    \Ddot{y_{p}} &amp;= L\dot{\theta}^{2}\cos{\theta} + L\Ddot{\theta}\sin{\theta}\label{eq:kinematyka_stop}\end{aligned}$$</span><br /></p>
+<p>Wykorzystując wyliczone wyżej przyspieszenia (<a href="#eq:x_wah_przyspieszenie" data-reference-type="ref" data-reference="eq:x_wah_przyspieszenie">[eq:x_wah_przyspieszenie]</a>) i (<a href="#eq:kinematyka_stop" data-reference-type="ref" data-reference="eq:kinematyka_stop">[eq:kinematyka_stop]</a>), wyznaczono wzory na wartość sił P i N (<a href="#eq:p_wzor" data-reference-type="ref" data-reference="eq:p_wzor">[eq:p_wzor]</a>, <a href="#eq:n_wzor" data-reference-type="ref" data-reference="eq:n_wzor">[eq:n_wzor]</a>):</p>
+<p><br /><span class="math display">$$\begin{aligned}
+    N &amp;= m(\Ddot{x} - L\dot{\theta}^{2}\sin{\theta} + L\Ddot{\theta}\cos{\theta}) \label{eq:n_wzor} \\
+    P &amp;= m(L\dot{\theta}^{2}\cos{\theta} + L\Ddot{\theta}\sin{\theta} + g) \label{eq:p_wzor}\end{aligned}$$</span><br /></p>
+<p>Równania sił (<a href="#eq:n_wzor" data-reference-type="ref" data-reference="eq:n_wzor">[eq:n_wzor]</a>) i (<a href="#eq:p_wzor" data-reference-type="ref" data-reference="eq:p_wzor">[eq:p_wzor]</a>) wstawiono do równań (<a href="#eq:dynamika_wozka_x" data-reference-type="ref" data-reference="eq:dynamika_wozka_x">[eq:dynamika_wozka_x]</a>) oraz (<a href="#eq:dynamika_wahadla_moment" data-reference-type="ref" data-reference="eq:dynamika_wahadla_moment">[eq:dynamika_wahadla_moment]</a>), uzyskując ostateczne równania dynamiki układu (<a href="#eq:dynamika_ost_x" data-reference-type="ref" data-reference="eq:dynamika_ost_x">[eq:dynamika_ost_x]</a>) i (<a href="#eq:dynamika_ost_theta" data-reference-type="ref" data-reference="eq:dynamika_ost_theta">[eq:dynamika_ost_theta]</a>):</p>
+<p><br /><span class="math display">$$\begin{aligned}
+    &amp;(M+M)\Ddot{x} + mL\Ddot{\theta}\cos{\theta} - mL\dot{\theta}^{2}\sin{\theta} = F \label{eq:dynamika_ost_x}\\
+    &amp;(J+mL^{2})\Ddot{\theta} + mgL\sin{\theta} = -mL\Ddot{x}\cos{\theta} \label{eq:dynamika_ost_theta}\end{aligned}$$</span><br /></p>
+<p>Równania (<a href="#eq:dynamika_ost_x" data-reference-type="ref" data-reference="eq:dynamika_ost_x">[eq:dynamika_ost_x]</a>) i (<a href="#eq:dynamika_ost_theta" data-reference-type="ref" data-reference="eq:dynamika_ost_theta">[eq:dynamika_ost_theta]</a>) przekształcono następnie tak, aby uzyskać wzory na przyspieszenia liniowe i kątowe (<a href="#eq:przyspieszenie_x" data-reference-type="ref" data-reference="eq:przyspieszenie_x">[eq:przyspieszenie_x]</a>), (<a href="#eq:przyspieszenie_theta" data-reference-type="ref" data-reference="eq:przyspieszenie_theta">[eq:przyspieszenie_theta]</a>):</p>
+<p><br /><span class="math display">$$\begin{aligned}
+\Ddot{x} &amp;= \frac{m^{2}gL^{2}\sin{\theta}\cos{\theta} + mL(J + mL^{2})\dot{\theta}^{2}\sin{\theta} + (J+ mL^{2}) * F}{J(M + m) + mML^{2} + m^{2}L^{2}\sin^{2}{\theta}} \label{eq:przyspieszenie_x} \\
+    \Ddot{\theta} &amp;= \frac{-(M + m)mgL\sin{\theta} - mL\cos{\theta}*F - m^{2}L^{2}\dot{\theta}^{2}\sin{\theta}\cos{\theta}}{J(M + m) + mML^{2} + m^{2}L^{2}\sin^{2}{\theta}} \label{eq:przyspieszenie_theta}\end{aligned}$$</span><br /></p>
+<h2 id="nieliniowe-równania-stanu">Nieliniowe równania stanu</h2>
+<p>Wzory przyspieszeń służą do wyprowadzenia nieliniowych równań stanu. Przyjęto następujący wektor stanu (<a href="#eq:wektor_stanu" data-reference-type="ref" data-reference="eq:wektor_stanu">[eq:wektor_stanu]</a>):</p>
+<p><br /><span class="math display">$$\textbf{x} = \left[x_{1} \hspace{5px} x_{2} \hspace{5px} x_{3} \hspace{5px} x_{4}\right]^T = \left[x \hspace{5px} \dot{x} \hspace{5px} \theta \hspace{5px} \dot{\theta}\right]^T \label{eq:wektor_stanu}$$</span><br /></p>
+<p>Z wykorzystaniem równań (<a href="#eq:przyspieszenie_x" data-reference-type="ref" data-reference="eq:przyspieszenie_x">[eq:przyspieszenie_x]</a>), (<a href="#eq:przyspieszenie_theta" data-reference-type="ref" data-reference="eq:przyspieszenie_theta">[eq:przyspieszenie_theta]</a>) i (<a href="#eq:wektor_stanu" data-reference-type="ref" data-reference="eq:wektor_stanu">[eq:wektor_stanu]</a>) wyprowadzono nieliniowe równania stanu, opisujące zależności pomiędzy wahadłem a wózkiem.</p>
+<p><br /><span class="math display">$$\begin{aligned}
+    \dot{x_{1}} &amp;= x_{2} \\
+    \dot{x_{2}} &amp;= \frac{m^{2}gL^{2}\sin{x_{3}}\cos{x_{3}} + mL(J + mL^{2})\dot{x_{3}}^{2}\sin{x_{3}} + (J+ mL^{2}) * F}{J(M + m) + mML^{2} + m^{2}L^{2}\sin^{2}{x_{3}}} \\
+    \dot{x_{3}} &amp;= x_{4} \\
+    \dot{x_{4}} &amp; = \frac{-(M + m)mgL\sin{x_{3}} - mL\cos{x_{3}}*F - m^{2}L^{2}\dot{x_{3}}^{2}\sin{x_{3}}\cos{x_{3}}}{J(M + m) + mML^{2} + m^{2}L^{2}\sin^{2}{x_{3}}}\end{aligned}$$</span><br /></p>
+<p>Na podstawie doświadczeń z podrozdziału <a href="#subsec:sila_silnik" data-reference-type="ref" data-reference="subsec:sila_silnik">2.2</a>, siła F wyrażona jest następującym wzorem:</p>
+<p><br /><span class="math display"><em>F</em> = 0.5 * <em>u</em> + 0.3</span><br /></p>
+<p>Gdzie <span class="math inline"><em>u</em></span> to napięcie sterujące z zakresu <span class="math inline"> ± 12<em>V</em></span>.</p>
+<p>Po podstawieniu (<a href="#eq:wzor_sila_sterowanie" data-reference-type="ref" data-reference="eq:wzor_sila_sterowanie">[eq:wzor_sila_sterowanie]</a>) do równań stanu, uzyskano następujące równania:</p>
+<p><br /><span class="math display">$$\begin{aligned}
+    \dot{x_{1}} &amp;= x_{2} \\
+    \dot{x_{2}} &amp;= \frac{m^{2}gL^{2}\sin{x_{3}}\cos{x_{3}} + mL(J + mL^{2})x_{4}^{2}\sin{x_{3}} + (J+ mL^{2}) * (0.5*u + 0.3)}{J(M + m) + mML^{2} + m^{2}L^{2}\sin^{2}{x_{3}}} \\
+    \dot{x_{3}} &amp;= x_{4} \\
+    \dot{x_{4}} &amp; = \frac{-(M + m)mgL\sin{x_{3}} - mL\cos{x_{3}}*(0.5*u + 0.3) - m^{2}L^{2}x_{4}^{2}\sin{x_{3}}\cos{x_{3}}}{J(M + m) + mML^{2} + m^{2}L^{2}\sin^{2}{x_{3}}}\end{aligned}$$</span><br /></p>
+<h2 id="linearyzacja-równań-stanu">Linearyzacja równań stanu</h2>
+<p>Linearyzację układu przeprowadzono wokół punktu równowagi <span class="math inline"><em>θ</em> = <em>π</em></span>. Wskutek tego założenia, możliwe jest przybliżenie wartości funkcji trygonometrycznych:</p>
+<p><br /><span class="math display">$$\begin{aligned}
+    \sin{\theta} &amp;\approx -\theta \\
+    \cos{\theta} &amp;\approx -1 \\
+    \sin{2\theta} &amp;\approx 2\theta\end{aligned}$$</span><br /></p>
+<p>Po linearyzacji, uzyskano następujące równania stanu:</p>
+<p><br /><span class="math display">$$\begin{aligned}
+    \dot{x_{1}} &amp;= x_{2} \\
+    \dot{x_{2}} &amp;= \frac{m^{2}gL^{2}x_{3} + (J+ mL^{2}) * (0.5*u + 0.3)}{J(M + m) + mML^{2}} \\
+    \dot{x_{3}} &amp;= x_{4} \\
+    \dot{x_{4}} &amp; = \frac{(M + m)mgLx_{3} + mL*(0.5*u + 0.3)}{J(M + m) + mML^{2}}\end{aligned}$$</span><br /></p>
+<p>Zlinearyzowane równania stanu zostały wykorzystanie do utworzenia modelu symulacyjnego wahadła odwróconego.</p>
+<h1 id="model-symulacyjny">Model symulacyjny</h1>
+<p>Na podstawie modelu matematycznego został utworzony model symulacyjny w Simulinku (<a href="#fig:model_symulacyjny" data-reference-type="ref" data-reference="fig:model_symulacyjny">10</a>).</p>
+<figure>
+<img src="model_sym.png" id="fig:model_symulacyjny" style="width:60.0%" alt="" /><figcaption>Model symulacyjny wahadła odwróconego</figcaption>
+</figure>
+<p>Został on dołączony do istniejącej aplikacji sterującej wózkiem. Dodatkowo została dodana histereza w zależności od położenia wózka. Rozwiązanie to pozwoli uniknąć sytuacji, w której wózek uderza w krawędź szyny. Na podstawie sygnału położenia wózka (rys. <a href="#fig:histereza" data-reference-type="ref" data-reference="fig:histereza">11</a>) sprawdzane są warunki ze stałymi wartościami granicznymi, po przekroczeniu których wózek przez chwilę porusza się z maksymalną prędkością w przeciwnym kierunku, żeby zapobiec zderzeniu wózka z krawędzią szyny.</p>
+<figure>
+<img src="histereza.png" id="fig:histereza" style="width:60.0%" alt="" /><figcaption>Fragment schematu symulacji z wyszczególnionym modułem histerezy</figcaption>
+</figure>
+<h1 id="regulator-lqr">Regulator LQR</h1>
+<p>Równanie regulatora (<a href="#eq:wzor_LQR" data-reference-type="ref" data-reference="eq:wzor_LQR">[eq:wzor_LQR]</a>) będzie wykorzystane jako sterowanie w układzie.</p>
+<p><br /><span class="math display"><em>u</em>(<em>t</em>) =  − <em>K</em><em>x</em>(<em>t</em>)</span><br /></p>
+<p>Równaniem decydującym o wartościach macierzy K było równanie <a href="#eq:wzor_matrix1" data-reference-type="ref" data-reference="eq:wzor_matrix1">[eq:wzor_matrix1]</a>, z którego otrzymano zależność <a href="#eq:wzor_LQR_x_prim" data-reference-type="ref" data-reference="eq:wzor_LQR_x_prim">[eq:wzor_LQR_x_prim]</a></p>
+<p><br /><span class="math display">$$\begin{aligned}
+    \dot{x} &amp;= Ax(t) + Bu(t) \label{eq:wzor_matrix1}\\
+    y &amp;= Cx(t) + Du(t) \label{eq:wzor_matrix2}\end{aligned}$$</span><br /></p>
+<p><br /><span class="math display">$$\begin{aligned}
+\label{eq:wzor_LQR_x_prim}
+    \dot{x} &amp;= Ax(t) + BKx(t)\\
+    \dot{x} &amp;= (A + BK) x(t)\end{aligned}$$</span><br /></p>
+<p>Na podstawie zadanych wartości uchybu oraz wartości sterowania uzyskano macierze obserwatora (<a href="#mat:Q" data-reference-type="ref" data-reference="mat:Q">[mat:Q]</a>) i regulatora (<a href="#mat:R" data-reference-type="ref" data-reference="mat:R">[mat:R]</a>). Wykorzystując macierze A, B, Q i R obliczono macierz wzmocnień K (<a href="#mat:K" data-reference-type="ref" data-reference="mat:K">[mat:K]</a>).</p>
+<p><br /><span class="math display">$$\begin{aligned}
+    Q &amp;= \begin{bmatrix} 
+    100 &amp; 0 &amp; 0 &amp; 0\\
+    0 &amp; 100 &amp; 0 &amp; 0\\
+    0 &amp; 0 &amp; 3600 &amp; 0\\
+    0 &amp; 0 &amp; 0 &amp; 100\end{bmatrix} \label{mat:Q}\\
+    R &amp;= 0.5 \label{mat:R} \\
+    K &amp;= \begin{bmatrix}
+    -10.00 &amp; -19.92 &amp; 161.95 &amp; 49.60\end{bmatrix} \label{mat:K} \\\end{aligned}$$</span><br /></p>
+<p>Zaimplementowany regulator został dodany do modelu symulacyjnego oraz przedstawiony na rys. <a href="#fig:lqr" data-reference-type="ref" data-reference="fig:lqr">12</a></p>
+<figure>
+<img src="lqr.png" id="fig:lqr" style="width:60.0%" alt="" /><figcaption>Model symulacyjny wahadła odwróconego z regulatorem LQR</figcaption>
+</figure>
+<h1 id="testowanie-na-obiekcie-rzeczywistym">Testowanie na obiekcie rzeczywistym</h1>
+<p>W trakcie testowania obliczonego regulatora na obiekcie rzeczywistym, ujawnione zostały problemy związane z błędnym przyjęciem zwrotu kąta <span class="math inline"><em>θ</em></span> - w obiekcie rzeczywistym <span class="math inline"><em>θ</em></span> ma zwrot zgodnie z ruchem wskazówek zegara, w obiekcie modelowanym - przeciwnie do wskazówek zegara. W celu poprawy implementacji, wymagana jest korekcja znaku kąta - jest to realizowalne na jeden z dwóch sposobów:</p>
+<ul>
+<li><p>odwrócenie znaku wyjściowej wartości kąta z obiektu,</p></li>
+<li><p>zmiana kierunku kąta <span class="math inline"><em>θ</em></span> w modelu matematycznym.</p></li>
+</ul>
+<p>Sposób rozwiązania napotkanego problemu zostanie dobrany w ciągu najbliższych zajęć. Ponadto, wymagane jest opracowanie mechanizmu swing-up, w celu doprowadzenia wahadła do punktu zbliżonego do punktu równowagi, gdyż tylko w jego otoczeniu realizowana jest regulacja.</p>
+</body>
+</html>
