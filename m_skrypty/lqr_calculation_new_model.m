@@ -14,21 +14,19 @@ Q2 = (J*(M+m) + M*m*L*L);
 
 % Macierze stanu
 A = [ 0 1 0 0;
-    0 0 m*m*g*L*L/(J*(M+m) + m*M*L*L) 0;
+    0 0 -m*m*g*L*L/(J*(M+m) + m*M*L*L) 0;
     0 0 0 1;
     0 0 ((M+m)*m*g*L)/(J*(M+m) + m*M*L*L) 0];
 
 B = [0;
-    (J + m*L*L)/(J*(M+m) + m*M*L*L);
+    -(J + m*L*L)/(J*(M+m) + m*M*L*L);
     0;
     m*L/(J*(M+m) + m*M*L*L)];
 
 C = [1 0 0 0;
-    0 1 0 0;
-    0 0 1 0;
-    0 0 0 1];
+    0 0 1 0];
 
-D = [0; 0; 0; 0];
+D = [0; 0];
 
 tf = ss2tf(A, B, C, D);
 
