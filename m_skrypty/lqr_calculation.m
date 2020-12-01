@@ -36,7 +36,7 @@ Q = [1000 0 0 0;
     0 1000 0 0;
     0 0 3600 0; 
     0 0 0 1000]; % Macierz obserwatora
-R = 10; % Macierz regulacji
+R = 100; % Macierz regulacji
 
 % Obliczenie macierzy LQR
 K_reg = lqr(A,B,Q,R);

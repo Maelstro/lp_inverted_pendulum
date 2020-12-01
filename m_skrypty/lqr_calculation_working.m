@@ -33,11 +33,11 @@ D = [0; 0; 0; 0];
 
 tf = ss2tf(A, B, C, D);
 
-Q = [1000 0 0 0; 
-    0 1000 0 0;
-    0 0 3600 0; 
-    0 0 0 1000]; % Macierz obserwatora
-R = 10; % Macierz regulacji
+Q = [10000 0 0 0; 
+    0 1 0 0;
+    0 0 5000 0; 
+    0 0 0 1]; % Macierz obserwatora
+R = 100; % Macierz regulacji
 
 % Obliczenie macierzy LQR
 K_reg = lqr(A,B,Q,R);
