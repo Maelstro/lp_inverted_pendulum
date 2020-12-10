@@ -19,7 +19,7 @@ A = [ 0 1 0 0;
     0 0 ((M+m)*m*g*L)/(J*(M+m) + m*M*L*L) 0];
 
 B = [0;
-    (J + m*L*L)/(J*(M+m) + m*M*L*L);
+    -(J + m*L*L)/(J*(M+m) + m*M*L*L);
     0;
     m*L/(J*(M+m) + m*M*L*L)];
 
@@ -32,10 +32,10 @@ D = [0; 0; 0; 0];
 
 tf = ss2tf(A, B, C, D);
 
-Q = [1000 0 0 0; 
-    0 1000 0 0;
-    0 0 3600 0; 
-    0 0 0 1000]; % Macierz obserwatora
+Q = [10000 0 0 0; 
+    0 100 0 0;
+    0 0 360 0; 
+    0 0 0 100]; % Macierz obserwatora
 R = 100; % Macierz regulacji
 
 % Obliczenie macierzy LQR
